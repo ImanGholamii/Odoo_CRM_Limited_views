@@ -1,0 +1,75 @@
+<odoo>
+    <record id="view_crm_lead_form_limited" model="ir.ui.view">
+        <field name="name">crm.lead.form.limited</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group" position="replace">
+                <group>
+                    <group>
+                        <field name="partner_id"/>
+                    </group>
+                    <group>
+                        <field name="date_deadline"/>
+                        <field name="priority" widget="priority" class="oe_inline"/>
+                        <field name="tag_ids" widget="many2many_tags"
+                               options="{'no_create': True, 'color_field': 'color'}"/>
+                    </group>
+                </group>
+            </xpath>
+
+
+            <!-- Added 'groups' to limit view show for general users -->
+            <xpath expr="//div[@class='col']" position="replace">
+                <div class="col" groups="custom_limited_crm_log_note_and_views.group_crm_full_access">
+                    <label for="expected_revenue" class="oe_edit_only"/>
+                    <div class="o_row">
+                        <field name="company_currency" invisible="1"/>
+                        <field name="expected_revenue" class="oe_inline" widget='monetary'
+                               options="{'currency_field': 'company_currency'}"/>
+                        <span class="oe_grey p-2" groups="crm.group_use_recurring_revenues">+</span>
+                        <span class="oe_grey p-2" groups="!crm.group_use_recurring_revenues">at</span>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- hidden fields for general users -->
+            <xpath expr="//div[@class='col' and not(contains(@attrs, 'invisible'))]" position="after">
+                <div class="col" invisible="1" groups="!custom_limited_crm_log_note_and_views.group_crm_full_access">
+                    <label for="expected_revenue" class="oe_edit_only"/>
+                    <div class="o_row">
+                        <field name="company_currency" invisible="1"/>
+                        <field name="expected_revenue" class="oe_inline" widget='monetary'
+                               options="{'currency_field': 'company_currency'}"/>
+                        <span class="oe_grey p-2" groups="crm.group_use_recurring_revenues">+</span>
+                        <span class="oe_grey p-2" groups="!crm.group_use_recurring_revenues">at</span>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- full access fields -->
+            <xpath expr="//group" position="after">
+                <group groups="custom_limited_crm_log_note_and_views.group_crm_full_access">
+                    <group>
+                        <field name="email_from"/>
+                        <field name="phone"/>
+                    </group>
+
+                    <group>
+                        <field name="user_id"/>
+                        <field name="team_id"/>
+                    </group>
+
+                    <!-- hidden fields -->
+                    <group invisible="1">
+                        <field name="user_company_ids"/>
+                        <field name="stage_id" widget="statusbar"/>
+                        <field name="mobile_blacklisted"/>
+                    </group>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
