@@ -30,7 +30,8 @@
         # 'security/ir.model.access.csv',
         'security/security.xml',
         'views/crm_lead_views.xml',
-        'views/crm_lead_kanban_views.xml',
+        'views/crm_lead_kanban_inherit_views.xml',
+        'views/crm_lead_inherit_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
