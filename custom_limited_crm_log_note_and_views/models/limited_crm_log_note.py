@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, api, fields
 
 
 class CrmLead(models.Model):
@@ -19,3 +19,15 @@ class CrmLead(models.Model):
         else:
             tracked_fields = set()
         return super(CrmLead, self).message_track(tracked_fields, initial_values)
+
+    # To hiding the  expected_revenue value from every kanban cards
+    can_see_financials = fields.Boolean(
+        compute="_compute_can_see_financials",
+        store=False
+    )
+
+    @api.depends('user_id')
+    def _compute_can_see_financials(self):
+        for record in self:
+            record.can_see_financials = self.env.user.has_group(
+                'custom_limited_crm_log_note_and_views.group_crm_full_access')
