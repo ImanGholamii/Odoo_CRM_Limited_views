@@ -5,22 +5,23 @@ class CrmLead(models.Model):
     _inherit = "crm.lead"
 
     def message_post(self, **kwargs):
-        message = f"New opportunity: {self.name}"
-        if self.partner_id:
-            message += f"\nCustomer: {self.partner_id.name}"
+        if 'body' not in kwargs:
+            message = f"New Opportunity: {self.name}"
+            if self.partner_id:
+                message += f"\nCustomer: {self.partner_id.name}"
+            kwargs['body'] = message
 
-        return super(CrmLead, self).message_post(body=message, **kwargs)
+        return super().message_post(**kwargs)
 
     def message_track(self, tracked_fields, initial_values):
         """delete expected_revenue from log chatter"""
-
         if 'partner_id' in tracked_fields:
             tracked_fields = {'partner_id'}
         else:
             tracked_fields = set()
-        return super(CrmLead, self).message_track(tracked_fields, initial_values)
+        return super().message_track(tracked_fields, initial_values)
 
-    # To hiding the  expected_revenue value from every kanban cards
+    # Hide expected_revenue from kanban cards
     can_see_financials = fields.Boolean(
         compute="_compute_can_see_financials",
         store=False
